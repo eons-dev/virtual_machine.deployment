@@ -8,7 +8,7 @@ spec:
     - {{ $p.name }}
   routes:
   - kind: Rule
-    match: Host(`{{ $.Values.user.domain }}`)
+    match: Host(`{{ tpl $.Values.user.domain $ }}`)
     services:
     - name: {{ tpl $.Values.host.name $ }}-svc
       port: {{ $p.port }}
