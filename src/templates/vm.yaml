@@ -1,0 +1,68 @@
+apiVersion: kubevirt.io/v1
+kind: VirtualMachine
+metadata:
+  name: "{{ tpl .Values.host.name . }}"
+  generation: 1
+  labels:
+    app: "{{ tpl .Values.host.name . }}"
+    kubevirt.io/os: linux
+spec:
+  running: true
+  template:
+    metadata:
+      labels:
+        kubevirt.io/domain: "{{ tpl .Values.host.name . }}"
+    spec:
+      domain:
+        devices:
+          disks:
+            - name: disk0
+              bootOrder: 1
+              disk:
+                bus: "sata"
+            - name: "cloudinit"
+              cdrom:
+                bus: "sata"
+                readonly: true
+          interfaces:
+            - name: "default"
+              bridge: {}
+              macAddress: {{ .Values.host.machine.mac }}
+        machine:
+          type: {{ .Values.host.machine.type }}
+        resources:
+          requests:
+            memory: {{ .Values.host.resources.requests.memory }}
+            cpu: {{ .Values.host.resources.requests.cpu }}
+      networks:
+        - name: "default"
+          pod: {}
+      volumes:
+        - name: "disk0"
+          containerdisk:
+            image: {{ .Values.host.image }}
+        - name: "cloudinit"
+          cloudInitNoCloud:
+            userData: |
+              #cloud-config
+              hostname: "{{ tpl .Values.host.name . }}"
+              users:
+              - name: proto
+                sudo: ['ALL=(ALL) NOPASSWD:ALL']
+                groups: sudo
+                shell: /bin/bash
+              chpasswd:
+                list: |
+                  proto:toor
+                  root:toor
+                expire: False
+              write_files:
+              - path: /etc/run/rclone
+                encoding: b64
+                permissions: "0644"
+                content: "{{ .Values.guest.rclone }}"
+                owner: proto:proto
+              - path: /etc/run/image
+                permissions: "0644"
+                content: "{{ .Values.guest.image }}"
+                owner: proto:proto

@@ -1,0 +1,36 @@
+{
+  "name": "virtual",
+  "type": "helm",
+  "clear_build_path" : true,
+  "build_in" : "tmp",
+  "next": [
+    {
+      "run_when_none" : [
+        "github"
+      ],
+      "build" : "proxy",
+      "build_in" : "local",
+      "copy" : [
+        {"../../src/" : "local/helm/src/"}
+      ],
+      "config" : {
+        "clear_build_path" : false,
+        "proxy" : "../config/local.json"
+      }
+    },
+    {
+      "run_when_any" : [
+        "github"
+      ],
+      "build" : "proxy",
+      "build_in" : "github",
+      "copy" : [
+        {"../../src/" : "github/local/helm/src/"}
+      ],
+      "config" : {
+        "clear_build_path" : false,
+        "proxy" : "../config/github.json"
+      }
+    }
+  ]
+}

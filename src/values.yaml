@@ -1,0 +1,49 @@
+user:
+  domain: 'the.infrastructure.tech/{{ .Release.Namespace }}/{{ .Release.Name }}'
+
+guest:
+  image: "eons/img_guest:latest"
+  rclone: "Cg=="
+
+host:
+  name: '{{ .Release.Name }}'
+  image: "eons/img_host:latest"
+  hostpath: "/eons/local/"
+  resources:
+    requests:
+      memory: 2048Mi
+      cpu: 500m
+      storage: 8Gi
+    limits:
+      memory: 4096Mi
+      cpu: 1000m
+  machine:
+    type: q35
+    mac: 52:54:00:7f:eb:35
+  ports:
+  - name: "web"
+    port: 80
+  # - name: "p443"
+  #   port: 443
+  # - name: "p2052"
+  #   port: 2052
+  # - name: "p2053"
+  #   port: 2053
+  # - name: "p2082"
+  #   port: 2082
+  # - name: "p2083"
+  #   port: 2083
+  # - name: "p2086"
+  #   port: 2086
+  # - name: "p2087"
+  #   port: 2087
+  # - name: "p2095"
+  #   port: 2095
+  # - name: "p2096"
+  #   port: 2096
+  # - name: "p8080"
+  #   port: 8080
+  # - name: "p8880"
+  #   port: 8880
+  # - name: "p8443"
+  #   port: 8443
